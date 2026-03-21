@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FaJava, FaPython, FaNodeJs, FaCodeBranch, FaGithub, FaLinkedin, FaEnvelope, FaSun, FaMoon, FaMapMarkerAlt, FaExternalLinkAlt } from 'react-icons/fa'
+import { FaJava, FaPython, FaNodeJs, FaCodeBranch, FaGithub, FaLinkedin, FaEnvelope, FaSun, FaMoon, FaMapMarkerAlt, FaExternalLinkAlt, FaBars, FaTimes } from 'react-icons/fa'
 import { VscVscode } from 'react-icons/vsc'
 import {
   SiC, SiCplusplus, SiJavascript, SiReact, SiBootstrap,
@@ -45,7 +45,7 @@ const DATA = {
       desc: 'Architected a travel booking platform (WanderEase.com) enabling users to browse and reserve curated tour packages across domestic and international destinations.',
       features: [
         'Structured comprehensive travel sections featuring itineraries, adventure experiences, cultural tours, and customized plans.',
-        'Optimized interactive “View Details” and booking workflows to improve usability, streamline navigation, and enhance user experience.'
+        'Optimized interactive "View Details" and booking workflows to improve usability, streamline navigation, and enhance user experience.'
       ]
     },
   ],
@@ -72,6 +72,10 @@ function CustomCursor() {
   const dot = useRef(null)
   
   useEffect(() => {
+    // Hide cursor on touch devices
+    const isTouch = window.matchMedia('(hover: none)').matches
+    if (isTouch) return
+
     const move = (e) => {
       if (dot.current) {
         dot.current.style.left = e.clientX + 'px'
@@ -83,7 +87,7 @@ function CustomCursor() {
   }, [])
 
   return (
-    <div ref={dot} style={{
+    <div ref={dot} className="custom-cursor" style={{
       position: 'fixed', width: 20, height: 20,
       background: 'var(--accent)', borderRadius: '50%',
       transform: 'translate(-50%,-50%)', pointerEvents: 'none',
@@ -95,8 +99,8 @@ function CustomCursor() {
 
 function SectionHeading({ title }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 80 }}>
-      <h2 style={{ fontSize: '1.4rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', margin: 0 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 'clamp(40px, 6vw, 80px)' }}>
+      <h2 style={{ fontSize: 'clamp(1rem, 3vw, 1.4rem)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', margin: 0, whiteSpace: 'nowrap' }}>
         {title}
       </h2>
       <div style={{ height: 1, flex: 1, background: 'var(--border-strong)' }} />
@@ -106,6 +110,8 @@ function SectionHeading({ title }) {
 
 const tilt3D = {
   onMouseMove(e) {
+    // Disable tilt on touch devices
+    if (window.matchMedia('(hover: none)').matches) return
     const el = e.currentTarget
     const rect = el.getBoundingClientRect()
     const x = ((e.clientX - rect.left) / rect.width - 0.5) * 18
@@ -131,17 +137,28 @@ const tilt3D = {
 
 function Nav({ theme, toggleTheme }) {
   const links = ['Toolkit', 'Projects', 'Experience', 'Education', 'Certifications', 'Contact']
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  // Close menu on route change / scroll
+  useEffect(() => {
+    const close = () => setMenuOpen(false)
+    window.addEventListener('scroll', close)
+    return () => window.removeEventListener('scroll', close)
+  }, [])
 
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      padding: '24px clamp(20px, 5vw, 60px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      backdropFilter: 'blur(20px)', background: 'transparent'
+      padding: '20px clamp(16px, 5vw, 60px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      backdropFilter: 'blur(20px)', background: menuOpen ? 'var(--bg)' : 'transparent',
+      transition: 'background 0.3s'
     }}>
-      <div style={{ fontWeight: 900, letterSpacing: '-0.04em', fontSize: '1.1rem', textTransform: 'uppercase', cursor: 'pointer' }} onClick={() => window.scrollTo(0, 0)}>
+      <div style={{ fontWeight: 900, letterSpacing: '-0.04em', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', textTransform: 'uppercase', cursor: 'pointer' }} onClick={() => { window.scrollTo(0, 0); setMenuOpen(false) }}>
         Viraj Suman
       </div>
-      <div style={{ display: 'flex', gap: 'clamp(12px, 3vw, 32px)', alignItems: 'center' }}>
+
+      {/* Desktop links */}
+      <div className="nav-desktop" style={{ display: 'flex', gap: 'clamp(12px, 2.5vw, 32px)', alignItems: 'center' }}>
         {links.map(link => (
           <a key={link} href={`#${link.toLowerCase()}`} style={{
             fontFamily: 'var(--font-mono)', fontSize: '0.75rem', textTransform: 'uppercase',
@@ -153,13 +170,55 @@ function Nav({ theme, toggleTheme }) {
             {link}
           </a>
         ))}
+        <button onClick={toggleTheme} style={{
+          background: 'none', border: 'none', color: 'var(--text)', fontSize: '1.2rem', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0
+        }}>
+          {theme === 'dark' ? <FaSun /> : <FaMoon />}
+        </button>
       </div>
-      <button onClick={toggleTheme} style={{
-        background: 'none', border: 'none', color: 'var(--text)', fontSize: '1.2rem', cursor: 'none',
-        display: 'flex', alignItems: 'center', justifyContent: 'center'
-      }}>
-        {theme === 'dark' ? <FaSun /> : <FaMoon />}
-      </button>
+
+      {/* Mobile right side */}
+      <div className="nav-mobile" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <button onClick={toggleTheme} style={{
+          background: 'none', border: 'none', color: 'var(--text)', fontSize: '1.1rem', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', padding: 0
+        }}>
+          {theme === 'dark' ? <FaSun /> : <FaMoon />}
+        </button>
+        <button onClick={() => setMenuOpen(o => !o)} style={{
+          background: 'none', border: 'none', color: 'var(--text)', fontSize: '1.3rem', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', padding: 0
+        }}>
+          {menuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
+
+      {/* Mobile dropdown menu */}
+      {menuOpen && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0, right: 0,
+          background: 'var(--bg)', borderBottom: '1px solid var(--border)',
+          display: 'flex', flexDirection: 'column', padding: '12px 0',
+          backdropFilter: 'blur(20px)'
+        }}>
+          {links.map(link => (
+            <a key={link} href={`#${link.toLowerCase()}`}
+              onClick={() => setMenuOpen(false)}
+              style={{
+                fontFamily: 'var(--font-mono)', fontSize: '0.85rem', textTransform: 'uppercase',
+                letterSpacing: '0.1em', padding: '14px clamp(16px, 5vw, 60px)',
+                borderBottom: '1px solid var(--border)', color: 'var(--text)',
+                transition: 'color 0.2s, background 0.2s'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.background = 'var(--surface)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'var(--text)'; e.currentTarget.style.background = 'transparent' }}
+            >
+              {link}
+            </a>
+          ))}
+        </div>
+      )}
     </nav>
   )
 }
@@ -239,18 +298,24 @@ function App() {
       <FloatingShapes theme={theme} />
       {formStatus === 'sent' && (
         <div style={{
-          position: 'fixed', bottom: 40, right: 40, background: 'var(--accent)', color: 'var(--bg)',
-          padding: '20px 40px', borderRadius: 8, zIndex: 1000, fontWeight: 700, fontFamily: 'var(--font-mono)',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.3)', animation: 'float 3s ease-in-out infinite'
+          position: 'fixed', bottom: 'clamp(16px, 4vw, 40px)', right: 'clamp(16px, 4vw, 40px)',
+          background: 'var(--accent)', color: 'var(--bg)',
+          padding: 'clamp(14px, 3vw, 20px) clamp(20px, 5vw, 40px)', borderRadius: 8, zIndex: 1000,
+          fontWeight: 700, fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.7rem, 2vw, 0.9rem)',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.3)', animation: 'float 3s ease-in-out infinite',
+          maxWidth: 'calc(100vw - 32px)'
         }} onClick={() => setFormStatus(null)}>
           TRANSMISSION SUCCESSFUL
         </div>
       )}
       {formStatus === 'error' && (
         <div style={{
-          position: 'fixed', bottom: 40, right: 40, background: '#ff4444', color: '#fff',
-          padding: '20px 40px', borderRadius: 8, zIndex: 1000, fontWeight: 700, fontFamily: 'var(--font-mono)',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+          position: 'fixed', bottom: 'clamp(16px, 4vw, 40px)', right: 'clamp(16px, 4vw, 40px)',
+          background: '#ff4444', color: '#fff',
+          padding: 'clamp(14px, 3vw, 20px) clamp(20px, 5vw, 40px)', borderRadius: 8, zIndex: 1000,
+          fontWeight: 700, fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.7rem, 2vw, 0.9rem)',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+          maxWidth: 'calc(100vw - 32px)'
         }} onClick={() => setFormStatus(null)}>
           TRANSMISSION FAILED
         </div>
@@ -258,15 +323,15 @@ function App() {
       <Nav theme={theme} toggleTheme={toggleTheme} />
 
       {/* Main Container */}
-      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(20px, 5vw, 60px)' }}>
+      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px, 5vw, 60px)' }}>
 
         {/* HERO SECTION */}
-        <section style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}>
+        <section style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', paddingTop: 80 }}>
           
-          {/* 3D Abstract Object Background */}
-          <div style={{
+          {/* 3D Abstract Object Background — hidden on small screens */}
+          <div className="hero-blob" style={{
             position: 'absolute', top: '15%', right: '5%',
-            width: 'clamp(280px, 35vw, 550px)', height: 'clamp(320px, 45vw, 650px)',
+            width: 'clamp(180px, 30vw, 550px)', height: 'clamp(200px, 35vw, 650px)',
             background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%)',
             boxShadow: theme === 'dark' ? 'inset -20px -20px 60px rgba(0,0,0,0.6), inset 20px 20px 60px rgba(255,255,255,0.4), 0 40px 100px rgba(0,0,0,0.8)'
                                         : 'inset -20px -20px 60px rgba(0,0,0,0.2), inset 20px 20px 60px rgba(255,255,255,0.6), 0 40px 100px rgba(217,130,43,0.3)',
@@ -274,35 +339,36 @@ function App() {
             zIndex: -1, pointerEvents: 'none'
           }} />
 
-          <div style={{ maxWidth: 650, zIndex: 1, marginTop: '10vh' }}>
+          <div style={{ maxWidth: 680, zIndex: 1, marginTop: '6vh' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 24, color: 'var(--text-muted)' }}>
               Biography
             </div>
             
             <h1 style={{
-              fontSize: 'clamp(3rem, 7vw, 6rem)', fontWeight: 900, lineHeight: 0.9,
-              letterSpacing: '-0.04em', textTransform: 'uppercase', marginBottom: 40
+              fontSize: 'clamp(2.4rem, 8vw, 6rem)', fontWeight: 900, lineHeight: 0.9,
+              letterSpacing: '-0.04em', textTransform: 'uppercase', marginBottom: 'clamp(24px, 4vw, 40px)'
             }}>
               BUILDING <br />
               <span style={{ color: 'transparent', WebkitTextStroke: '1px var(--text)' }}>DIGITAL</span> VOIDS.
             </h1>
 
             <p style={{
-              fontSize: 'clamp(1rem, 1.5vw, 1.15rem)', lineHeight: 1.6,
+              fontSize: 'clamp(0.95rem, 1.5vw, 1.15rem)', lineHeight: 1.6,
               color: 'var(--accent)', fontWeight: 600, maxWidth: 500, marginBottom: 16
             }}>
               {DATA.tagline}
             </p>
             <p style={{
-              fontSize: 'clamp(0.9rem, 1.2vw, 1.05rem)', lineHeight: 1.7,
-              color: 'var(--text-muted)', fontWeight: 300, maxWidth: 550, marginBottom: 40
+              fontSize: 'clamp(0.85rem, 1.2vw, 1.05rem)', lineHeight: 1.7,
+              color: 'var(--text-muted)', fontWeight: 300, maxWidth: 550, marginBottom: 'clamp(28px, 4vw, 40px)'
             }}>
               {DATA.about}
             </p>
             <a href="/cv/Viraj_Suman_CV.pdf" download style={{
               display: 'inline-flex', alignItems: 'center', gap: 12,
-              padding: '16px 32px', background: 'var(--accent)', color: 'var(--bg)',
-              fontFamily: 'var(--font-mono)', fontSize: '0.85rem', fontWeight: 700,
+              padding: 'clamp(12px, 2.5vw, 16px) clamp(24px, 5vw, 32px)',
+              background: 'var(--accent)', color: 'var(--bg)',
+              fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', fontWeight: 700,
               letterSpacing: '0.1em', textTransform: 'uppercase', borderRadius: 30,
               transition: 'transform 0.3s, box-shadow 0.3s'
             }}
@@ -316,18 +382,18 @@ function App() {
 
 
         {/* THE TOOLKIT */}
-        <section id="toolkit" style={{ padding: '100px 0' }}>
+        <section id="toolkit" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
           <SectionHeading title="The Toolkit" />
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 'clamp(16px, 3vw, 24px)' }}>
             {DATA.skills.map((skill, i) => (
               <div key={i} {...tilt3D} style={{
-                background: 'var(--surface)', padding: 40, borderRadius: 16,
+                background: 'var(--surface)', padding: 'clamp(24px, 4vw, 40px)', borderRadius: 16,
                 border: '1px solid var(--border)', transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out'
               }}>
                 <div style={{ color: 'var(--text-muted)', fontSize: '1.4rem', marginBottom: 24 }}>⬡</div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 12 }}>{skill.cat}</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: 32 }}>
+                <h3 style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', fontWeight: 700, marginBottom: 12 }}>{skill.cat}</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(0.82rem, 1.5vw, 0.9rem)', lineHeight: 1.6, marginBottom: 32 }}>
                   {skill.desc}
                 </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -349,52 +415,59 @@ function App() {
 
 
         {/* PROJECTS */}
-        <section id="projects" style={{ padding: '100px 0' }}>
+        <section id="projects" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
           <SectionHeading title="Projects" />
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {DATA.projects.map((p, i) => (
-              <a href={p.link || p.github} target="_blank" rel="noreferrer" key={i} style={{
-                display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 32,
-                padding: '40px 0', borderBottom: '1px solid var(--border)', transition: 'background 0.3s',
+              <a href={p.link || p.github} target="_blank" rel="noreferrer" key={i} className="project-row" style={{
+                display: 'grid',
+                gridTemplateColumns: 'auto 1fr',
+                alignItems: 'start',
+                gap: 'clamp(16px, 3vw, 32px)',
+                padding: 'clamp(24px, 4vw, 40px) 0',
+                borderBottom: '1px solid var(--border)',
+                transition: 'background 0.3s',
                 color: 'var(--text)'
               }}
               onMouseEnter={e => e.currentTarget.querySelector('.proj-title').style.color = 'var(--accent)'}
               onMouseLeave={e => e.currentTarget.querySelector('.proj-title').style.color = 'var(--text)'}
               >
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-subtle)' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-subtle)', paddingTop: 6 }}>
                   {p.id}
                 </div>
                 <div>
-                  <h3 className="proj-title" style={{
-                    fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: 900,
-                    textTransform: 'uppercase', letterSpacing: '-0.02em', transition: 'color 0.3s',
-                    marginBottom: 8
-                  }}>
-                    {p.title}
-                  </h3>
+                  {/* Title + date row */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+                    <h3 className="proj-title" style={{
+                      fontSize: 'clamp(1.2rem, 4vw, 2.5rem)', fontWeight: 900,
+                      textTransform: 'uppercase', letterSpacing: '-0.02em', transition: 'color 0.3s',
+                    }}>
+                      {p.title}
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, flexShrink: 0 }}>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-subtle)', textTransform: 'uppercase' }}>
+                        {p.date}
+                      </span>
+                      <div style={{ display: 'flex', gap: 12 }}>
+                        {p.github && <FaGithub style={{ fontSize: '1.2rem', cursor: 'pointer', transition: 'color 0.3s', color: 'var(--text-muted)' }} onMouseEnter={e => e.currentTarget.style.color='var(--accent)'} onMouseLeave={e => e.currentTarget.style.color='var(--text-muted)'} onClick={(e) => { if (p.link) { e.preventDefault(); window.open(p.github, '_blank'); } }} title="GitHub Repo" />}
+                        {p.link && <FaExternalLinkAlt style={{ fontSize: '1.1rem', cursor: 'pointer', transition: 'color 0.3s', color: 'var(--text-muted)' }} onMouseEnter={e => e.currentTarget.style.color='var(--accent)'} onMouseLeave={e => e.currentTarget.style.color='var(--text-muted)'} title="Live Preview" />}
+                      </div>
+                    </div>
+                  </div>
                   <div style={{
                     fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.1em',
-                    textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 16
+                    textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 12,
+                    flexWrap: 'wrap', display: 'flex', gap: 4
                   }}>
                     {p.stack.join(' · ')}
                   </div>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: 12 }}>
+                  <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', lineHeight: 1.6, marginBottom: 12 }}>
                     {p.desc}
                   </p>
-                  <ul style={{ paddingLeft: 16, color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6 }}>
+                  <ul style={{ paddingLeft: 16, color: 'var(--text-muted)', fontSize: 'clamp(0.8rem, 1.3vw, 0.85rem)', lineHeight: 1.6 }}>
                     {p.features && p.features.map((f, j) => <li key={j} style={{ marginBottom: 4 }}>{f}</li>)}
                   </ul>
-                </div>
-                <div style={{
-                  fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-subtle)',
-                  textTransform: 'uppercase', textAlign: 'right'
-                }}>
-                  {p.date}
-                  <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 12 }}>
-                    {p.github && <FaGithub style={{ fontSize: '1.2rem', cursor: 'pointer', transition: 'color 0.3s' }} onMouseEnter={e => e.currentTarget.style.color='var(--accent)'} onMouseLeave={e => e.currentTarget.style.color='currentColor'} onClick={(e) => { if (p.link) { e.preventDefault(); window.open(p.github, '_blank'); } }} title="GitHub Repo" />}
-                    {p.link && <FaExternalLinkAlt style={{ fontSize: '1.1rem', cursor: 'pointer', transition: 'color 0.3s' }} onMouseEnter={e => e.currentTarget.style.color='var(--accent)'} onMouseLeave={e => e.currentTarget.style.color='currentColor'} title="Live Preview" />}
-                  </div>
                 </div>
               </a>
             ))}
@@ -402,16 +475,16 @@ function App() {
         </section>
 
         {/* EXPERIENCE */}
-        <section id="experience" style={{ padding: '100px 0' }}>
+        <section id="experience" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
           <SectionHeading title="Experience & Training" />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 40 }}>
             {DATA.experience.map((exp, i) => (
               <div key={i} style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>{exp.role}</div>
+                <div style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>{exp.role}</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)', marginBottom: 16 }}>
                   {exp.org} — {exp.date}
                 </div>
-                <ul style={{ paddingLeft: 16, color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.7 }}>
+                <ul style={{ paddingLeft: 16, color: 'var(--text-muted)', fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', lineHeight: 1.7 }}>
                   {exp.points.map((pt, j) => <li key={j} style={{ marginBottom: 10 }}>{pt}</li>)}
                 </ul>
               </div>
@@ -420,14 +493,14 @@ function App() {
         </section>
 
         {/* EDUCATION & ACHIEVEMENTS */}
-        <section id="education" style={{ padding: '100px 0' }}>
+        <section id="education" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
           <SectionHeading title="Education & Achievements" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(32px, 5vw, 40px)' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 24, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Education</h3>
               {DATA.education.map((ed, i) => (
                 <div key={i} style={{ marginBottom: 32, paddingLeft: 20, borderLeft: '2px solid var(--border)' }}>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 600, marginBottom: 6 }}>{ed.degree}</div>
+                  <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', fontWeight: 600, marginBottom: 6 }}>{ed.degree}</div>
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{ed.inst} <br/> {ed.score}</div>
                 </div>
               ))}
@@ -439,7 +512,7 @@ function App() {
                 {DATA.achievements.map((a, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 16, color: 'var(--text)' }}>
                     <span style={{ fontSize: '1.4rem' }}>{a.icon}</span>
-                    <span style={{ fontSize: '0.95rem', lineHeight: 1.5, color: 'var(--text-muted)' }}>{a.text}</span>
+                    <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', lineHeight: 1.5, color: 'var(--text-muted)' }}>{a.text}</span>
                   </div>
                 ))}
               </div>
@@ -448,13 +521,13 @@ function App() {
         </section>
 
         {/* CERTIFICATIONS */}
-        <section id="certifications" style={{ padding: '100px 0' }}>
+        <section id="certifications" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
           <SectionHeading title="Certifications" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(12px, 2vw, 20px)' }}>
             {DATA.certs.map((cert, i) => (
               <a href={cert.link} target="_blank" rel="noreferrer" key={i} {...tilt3D} style={{
                 display: 'flex', alignItems: 'center', gap: 20,
-                padding: '24px', background: 'var(--surface)', border: '1px solid var(--border)',
+                padding: 'clamp(16px, 3vw, 24px)', background: 'var(--surface)', border: '1px solid var(--border)',
                 borderRadius: 16, transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out, border-color 0.3s'
               }}
               onMouseEnter={e => { tilt3D.onMouseMove(e); e.currentTarget.style.borderColor = 'var(--accent)'; }}
@@ -471,10 +544,10 @@ function App() {
                   {!cert.image && <span style={{ fontSize: '0.65rem', color: 'var(--text-subtle)', fontFamily: 'var(--font-mono)' }}>PIC</span>}
                 </div>
                 
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                    <div style={{ fontSize: '1rem', fontWeight: 600 }}>{cert.name}</div>
-                    <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--accent)' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6, gap: 8 }}>
+                    <div style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1rem)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>{cert.name}</div>
+                    <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--accent)', flexShrink: 0 }}>
                       {cert.date} ↗
                     </div>
                   </div>
@@ -487,29 +560,33 @@ function App() {
 
 
         {/* CONTACT */}
-        <section id="contact" style={{ padding: '100px 0 160px' }}>
+        <section id="contact" style={{ padding: 'clamp(60px, 10vw, 100px) 0 clamp(80px, 12vw, 160px)' }}>
           <h2 style={{
-            fontSize: 'clamp(3rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1,
+            fontSize: 'clamp(2.2rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1,
             letterSpacing: '-0.04em', textTransform: 'uppercase', marginBottom: 24
           }}>
             INITIATE <br/> CONTACT.
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: 60, maxWidth: 400, lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(0.85rem, 1.5vw, 1rem)', marginBottom: 'clamp(32px, 6vw, 60px)', maxWidth: 400, lineHeight: 1.6 }}>
             Currently accepting premium collaborations for web architecture and dimensional UX projects. Reach out to start a dialogue.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 60 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 'clamp(32px, 6vw, 60px)' }}>
             <a href={`mailto:${DATA.email}`} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <FaEnvelope style={{ color: 'var(--text-muted)' }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem' }}>{DATA.email}</span>
+              <FaEnvelope style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.9rem)', wordBreak: 'break-all' }}>{DATA.email}</span>
             </a>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <FaMapMarkerAlt style={{ color: 'var(--text-muted)' }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem' }}>Phagwara, Punjab, India</span>
+              <FaMapMarkerAlt style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' }}>Phagwara, Punjab, India</span>
             </div>
           </div>
 
-          <div {...tilt3D} style={{ background: 'var(--surface)', padding: '40px', borderRadius: 16, border: '1px solid var(--border)', maxWidth: 500, transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out' }}>
+          <div {...tilt3D} style={{
+            background: 'var(--surface)', padding: 'clamp(24px, 5vw, 40px)', borderRadius: 16,
+            border: '1px solid var(--border)', width: '100%', maxWidth: 500,
+            transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out'
+          }}>
             <form onSubmit={async (e) => {
               e.preventDefault()
               setFormStatus('sending')
@@ -539,20 +616,22 @@ function App() {
                   {f.isArea ? (
                     <textarea name={f.name} required placeholder={f.ph} style={{
                       width: '100%', padding: '16px', background: 'var(--bg)', border: '1px solid var(--border)',
-                      borderRadius: 8, color: 'var(--text)', outline: 'none', resize: 'vertical', minHeight: 120, fontFamily: 'var(--font-display)'
+                      borderRadius: 8, color: 'var(--text)', outline: 'none', resize: 'vertical', minHeight: 120,
+                      fontFamily: 'var(--font-display)', fontSize: 'clamp(0.85rem, 1.5vw, 1rem)', boxSizing: 'border-box'
                     }} />
                   ) : (
                     <input type={f.type} name={f.name} required placeholder={f.ph} style={{
                       width: '100%', padding: '16px', background: 'var(--bg)', border: '1px solid var(--border)',
-                      borderRadius: 8, color: 'var(--text)', outline: 'none', fontFamily: 'var(--font-display)'
+                      borderRadius: 8, color: 'var(--text)', outline: 'none',
+                      fontFamily: 'var(--font-display)', fontSize: 'clamp(0.85rem, 1.5vw, 1rem)', boxSizing: 'border-box'
                     }} />
                   )}
                 </div>
               ))}
               <button type="submit" disabled={formStatus === 'sending'} style={{
-                width: '100%', padding: '16px', background: formStatus === 'sending' ? 'var(--text-muted)' : 'var(--text)', color: 'var(--bg)',
-                border: 'none', borderRadius: 30, fontSize: '0.85rem', fontWeight: 700,
-                letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'none'
+                width: '100%', padding: 'clamp(12px, 2.5vw, 16px)', background: formStatus === 'sending' ? 'var(--text-muted)' : 'var(--text)', color: 'var(--bg)',
+                border: 'none', borderRadius: 30, fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', fontWeight: 700,
+                letterSpacing: '0.1em', textTransform: 'uppercase', cursor: formStatus === 'sending' ? 'not-allowed' : 'pointer'
               }}>
                 {formStatus === 'sending' ? 'SENDING...' : 'Send Transmission'}
               </button>

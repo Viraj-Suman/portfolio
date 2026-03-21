@@ -91,3 +91,48 @@ a {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+
+/* Touch devices: hide custom cursor, restore default */
+@media (hover: none) {
+  .custom-cursor { display: none !important; }
+  body { cursor: auto; }
+  button, a { cursor: pointer; }
+}
+
+/* Desktop nav visible, mobile hamburger hidden */
+.nav-desktop { display: flex !important; }
+.nav-mobile  { display: none  !important; }
+
+/* Mobile: show hamburger, hide desktop nav links */
+@media (max-width: 768px) {
+  .nav-desktop { display: none  !important; }
+  .nav-mobile  { display: flex  !important; }
+}
+
+/* Hero blob: push behind text on small screens */
+@media (max-width: 600px) {
+  .hero-blob {
+    opacity: 0.06 !important;
+    top: 5% !important;
+    right: -10% !important;
+    width: 85vw !important;
+    height: 85vw !important;
+  }
+}
+
+/* Form inputs: full width without overflow */
+input, textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Project rows: tighter on mobile */
+@media (max-width: 480px) {
+  .project-row {
+    grid-template-columns: auto 1fr !important;
+    gap: 12px !important;
+  }
+}
+
