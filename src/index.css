@@ -111,14 +111,14 @@ a {
   .nav-mobile  { display: flex  !important; }
 }
 
-/* Hero blob: push behind text on small screens */
+/* Hero avatar: responsive placement */
 @media (max-width: 600px) {
-  .hero-blob {
-    opacity: 0.06 !important;
+  .hero-avatar {
+    opacity: 0.15 !important;
     top: 5% !important;
     right: -10% !important;
-    width: 85vw !important;
-    height: 85vw !important;
+    width: 60vw !important;
+    height: 60vw !important;
   }
 }
 

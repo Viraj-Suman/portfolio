@@ -14,6 +14,26 @@ const SKILL_ICONS = {
   'MongoDB': <SiMongodb />, 'DSA': <FaCodeBranch />
 }
 
+const SKILL_COLORS = {
+  'C':          '#0077c0',
+  'C++':        '#00599c',
+  'Java':       '#f89820',
+  'Python':     '#3572A5',
+  'JavaScript': '#f7df1e',
+  'React.js':   '#61dafb',
+  'Node.js':    '#68a063',
+  'Bootstrap':  '#7952b3',
+  'HTML':       '#e44d26',
+  'CSS':        '#264de4',
+  'PHP':        '#787cb5',
+  'Git':        '#f05032',
+  'GitHub':     '#ffffff',
+  'VS Code':    '#007acc',
+  'MySQL':      '#00758f',
+  'MongoDB':    '#47a248',
+  'DSA':        '#fabb77',
+}
+
 const DATA = {
   name: 'Viraj Suman',
   email: 'virajsuman20@gmail.com',
@@ -224,63 +244,186 @@ function Nav({ theme, toggleTheme }) {
 }
 
 function FloatingShapes({ theme }) {
-  const getShadow = (intensity = 0.5) => theme === 'dark' 
-    ? `inset -10px -10px 20px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.2), 0 15px 30px rgba(0,0,0, ${intensity})`
-    : `inset -10px -10px 20px rgba(0,0,0,0.1), inset 10px 10px 20px rgba(255,255,255,0.8), 0 15px 30px rgba(217,130,43, ${intensity * 0.5})`
+  const isDark = theme === 'dark'
+
+  const glowShadow = (color, size = 40) =>
+    `0 0 ${size}px ${color}, 0 0 ${size * 2}px ${color}55, 0 0 ${size * 4}px ${color}22`
+
+  const cubeShadow = (color) =>
+    `inset -8px -8px 16px rgba(0,0,0,0.6), inset 6px 6px 14px rgba(255,255,255,0.15), 0 20px 50px ${color}66, ${glowShadow(color, 20)}`
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: -2, pointerEvents: 'none', overflow: 'hidden' }}>
-      <style>
-        {`
-          @keyframes spin-3d {
-            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0px) scale(1); }
-            50% { transform: rotateX(180deg) rotateY(90deg) rotateZ(180deg) translateY(-40px) scale(1.05); }
-            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg) translateY(0px) scale(1); }
-          }
-          @keyframes spin-3d-alt {
-            0% { transform: rotateX(360deg) rotateY(0deg) rotateZ(360deg) translateY(0px) scale(1); }
-            50% { transform: rotateX(180deg) rotateY(180deg) rotateZ(90deg) translateY(50px) scale(0.95); }
-            100% { transform: rotateX(0deg) rotateY(360deg) rotateZ(0deg) translateY(0px) scale(1); }
-          }
-        `}
-      </style>
-      
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: -2, pointerEvents: 'none', overflow: 'hidden', perspective: '1200px' }}>
+      <style>{`
+        @keyframes spin3d-cw {
+          0%   { transform: perspective(900px) rotateX(0deg)   rotateY(0deg)   rotateZ(0deg)   translateY(0px); }
+          50%  { transform: perspective(900px) rotateX(200deg) rotateY(100deg) rotateZ(180deg) translateY(-35px); }
+          100% { transform: perspective(900px) rotateX(360deg) rotateY(360deg) rotateZ(360deg) translateY(0px); }
+        }
+        @keyframes spin3d-ccw {
+          0%   { transform: perspective(900px) rotateX(360deg) rotateY(0deg)   rotateZ(360deg) translateY(0px); }
+          50%  { transform: perspective(900px) rotateX(180deg) rotateY(200deg) rotateZ(90deg)  translateY(40px); }
+          100% { transform: perspective(900px) rotateX(0deg)   rotateY(360deg) rotateZ(0deg)   translateY(0px); }
+        }
+        @keyframes orbit-x {
+          0%   { transform: perspective(600px) rotateX(0deg) scale(1); }
+          100% { transform: perspective(600px) rotateX(360deg) scale(1); }
+        }
+        @keyframes orbit-y {
+          0%   { transform: perspective(600px) rotateY(0deg); }
+          100% { transform: perspective(600px) rotateY(360deg); }
+        }
+        @keyframes floatY {
+          0%,100% { transform: translateY(0px) rotate(0deg); }
+          50%      { transform: translateY(-28px) rotate(8deg); }
+        }
+        @keyframes floatY2 {
+          0%,100% { transform: translateY(0px) rotate(0deg); }
+          50%      { transform: translateY(22px) rotate(-6deg); }
+        }
+        @keyframes pulse-glow {
+          0%,100% { opacity: 0.18; transform: scale(1); }
+          50%      { opacity: 0.35; transform: scale(1.12); }
+        }
+        @keyframes pulse-glow2 {
+          0%,100% { opacity: 0.22; transform: scale(1.08); }
+          50%      { opacity: 0.10; transform: scale(0.92); }
+        }
+        @keyframes drift {
+          0%   { transform: translate(0,0) rotate(0deg); }
+          25%  { transform: translate(30px,-20px) rotate(90deg); }
+          50%  { transform: translate(0,-40px) rotate(180deg); }
+          75%  { transform: translate(-30px,-20px) rotate(270deg); }
+          100% { transform: translate(0,0) rotate(360deg); }
+        }
+        @keyframes robot-hi {
+          0%, 100%   { transform: rotate(0deg); }
+          10%, 30%, 50% { transform: rotate(-12deg); }
+          20%, 40%, 60% { transform: rotate(8deg); }
+          70%        { transform: rotate(0deg); }
+        }
+      `}</style>
+
+      {/* ── LAYER 1: Large ambient glowing orbs (back depth) ── */}
       <div style={{
-        position: 'absolute', top: '15%', left: '8%', width: 60, height: 60, borderRadius: 12,
-        background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%)',
-        boxShadow: getShadow(0.4), animation: 'spin-3d 18s linear infinite', opacity: 0.15
+        position:'absolute', top:'5%', left:'-5%',
+        width:320, height:320, borderRadius:'50%',
+        background: isDark
+          ? 'radial-gradient(circle, rgba(97,218,251,0.18) 0%, rgba(97,218,251,0.04) 60%, transparent 100%)'
+          : 'radial-gradient(circle, rgba(97,218,251,0.12) 0%, transparent 70%)',
+        animation: 'pulse-glow 8s ease-in-out infinite',
+        filter: 'blur(2px)',
       }} />
-      
       <div style={{
-        position: 'absolute', top: '65%', right: '8%', width: 100, height: 100, borderRadius: '50%',
-        border: '6px solid var(--accent)', opacity: 0.1, animation: 'spin-3d-alt 25s linear infinite'
+        position:'absolute', top:'55%', right:'-8%',
+        width:400, height:400, borderRadius:'50%',
+        background: isDark
+          ? 'radial-gradient(circle, rgba(104,160,99,0.18) 0%, rgba(104,160,99,0.04) 60%, transparent 100%)'
+          : 'radial-gradient(circle, rgba(104,160,99,0.12) 0%, transparent 70%)',
+        animation: 'pulse-glow2 10s ease-in-out infinite',
+        filter: 'blur(2px)',
       }} />
-      
       <div style={{
-        position: 'absolute', bottom: '10%', left: '15%', width: 40, height: 120, borderRadius: 20,
-        background: 'linear-gradient(135deg, var(--accent-dark) 0%, transparent 100%)',
-        boxShadow: getShadow(0.3), animation: 'spin-3d 22s linear infinite', opacity: 0.2
+        position:'absolute', bottom:'5%', left:'30%',
+        width:280, height:280, borderRadius:'50%',
+        background: isDark
+          ? 'radial-gradient(circle, rgba(250,187,119,0.15) 0%, rgba(250,187,119,0.03) 60%, transparent 100%)'
+          : 'radial-gradient(circle, rgba(217,130,43,0.12) 0%, transparent 70%)',
+        animation: 'pulse-glow 12s ease-in-out infinite 3s',
+        filter: 'blur(2px)',
+      }} />
+      <div style={{
+        position:'absolute', top:'30%', right:'5%',
+        width:250, height:250, borderRadius:'50%',
+        background: isDark
+          ? 'radial-gradient(circle, rgba(121,82,179,0.2) 0%, rgba(121,82,179,0.04) 60%, transparent 100%)'
+          : 'radial-gradient(circle, rgba(121,82,179,0.1) 0%, transparent 70%)',
+        animation: 'pulse-glow2 9s ease-in-out infinite 1.5s',
+        filter: 'blur(2px)',
       }} />
 
-      <div style={{
-        position: 'absolute', top: '40%', right: '25%', width: 30, height: 30, borderRadius: 6,
-        background: 'var(--accent)', boxShadow: getShadow(0.2), animation: 'spin-3d-alt 14s linear infinite', opacity: 0.15
-      }} />
-
-      <div style={{
-        position: 'absolute', top: '30%', left: '35%', width: 70, height: 70, borderRadius: '50%',
-        background: 'linear-gradient(135deg, transparent 0%, var(--accent) 100%)',
-        boxShadow: getShadow(0.2), animation: 'spin-3d 30s linear infinite', opacity: 0.1
-      }} />
-      
-      <div style={{
-        position: 'absolute', bottom: '30%', right: '40%', width: 50, height: 50,
-        background: 'var(--accent)', clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
-        animation: 'spin-3d-alt 19s linear infinite', opacity: 0.15
-      }} />
+      {/* ── LAYER 2: Floating Skill Icons ── */}
+      {[
+        { name: 'React.js', top: '10%', left: '10%', size: 55, anime: 'spin3d-cw 20s linear infinite' },
+        { name: 'Python', top: '25%', right: '15%', size: 45, anime: 'spin3d-ccw 25s linear infinite' },
+        { name: 'JavaScript', top: '45%', left: '8%', size: 50, anime: 'spin3d-cw 18s linear infinite 2s' },
+        { name: 'Java', top: '65%', right: '12%', size: 48, anime: 'spin3d-ccw 22s linear infinite 1s' },
+        { name: 'Node.js', bottom: '15%', left: '15%', size: 52, anime: 'spin3d-cw 30s linear infinite 3s' },
+        { name: 'MongoDB', bottom: '25%', right: '8%', size: 45, anime: 'spin3d-ccw 15s linear infinite 5s' },
+        { name: 'MySQL', top: '5%', right: '35%', size: 40, anime: 'floatY 12s ease-in-out infinite' },
+        { name: 'Git', bottom: '10%', left: '45%', size: 42, anime: 'floatY2 10s ease-in-out infinite' },
+        { name: 'HTML', top: '35%', right: '40%', size: 38, anime: 'spin3d-cw 24s linear infinite 4s' },
+        { name: 'CSS', bottom: '40%', left: '30%', size: 40, anime: 'spin3d-ccw 28s linear infinite 2s' },
+        { name: 'C++', top: '55%', left: '25%', size: 35, anime: 'floatY 15s ease-in-out infinite' },
+        { name: 'PHP', bottom: '50%', right: '25%', size: 42, anime: 'floatY2 18s ease-in-out infinite' },
+        { name: 'VS Code', top: '75%', left: '40%', size: 40, anime: 'spin3d-cw 22s linear infinite 6s' },
+        { name: 'Bootstrap', top: '15%', right: '45%', size: 35, anime: 'floatY 14s ease-in-out infinite' },
+      ].map((s, i) => {
+        const color = SKILL_COLORS[s.name] || 'var(--accent)'
+        return (
+          <div key={i} style={{
+            position: 'absolute',
+            top: s.top,
+            left: s.left,
+            right: s.right,
+            bottom: s.bottom,
+            fontSize: s.size,
+            color: color,
+            opacity: isDark ? 0.45 : 0.25,
+            filter: `drop-shadow(0 0 20px ${color}88)`,
+            animation: s.anime,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: -1
+          }}>
+            {SKILL_ICONS[s.name]}
+          </div>
+        )
+      })}
     </div>
   )
 }
+
+// ─── Scroll Reveal ────────────────────────────────────────────────
+function useReveal(threshold = 0.1) {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        // Toggle visibility every time it crosses the threshold
+        setVisible(entry.isIntersecting)
+      },
+      { threshold }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
+  return [ref, visible]
+}
+
+function Reveal({ children, dir = 'up', delay = 0, style = {}, className = '', as: Tag = 'div' }) {
+  const [ref, visible] = useReveal()
+  const transforms = { up: 'translateY(40px)', down: 'translateY(-40px)', left: 'translateX(-40px)', right: 'translateX(40px)', scale: 'scale(0.92)' }
+  return (
+    <Tag
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'none' : (transforms[dir] || transforms.up),
+        transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+        ...style
+      }}
+    >
+      {children}
+    </Tag>
+  )
+}
+// ─── End Scroll Reveal ────────────────────────────────────────────
 
 function App() {
   const [theme, setTheme] = useState('dark')
@@ -326,101 +469,213 @@ function App() {
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px, 5vw, 60px)' }}>
 
         {/* HERO SECTION */}
-        <section style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', paddingTop: 80 }}>
+        <section id="biography" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', paddingTop: 80 }}>
           
-          {/* 3D Abstract Object Background — hidden on small screens */}
-          <div className="hero-blob" style={{
-            position: 'absolute', top: '15%', right: '5%',
-            width: 'clamp(180px, 30vw, 550px)', height: 'clamp(200px, 35vw, 650px)',
-            background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%)',
-            boxShadow: theme === 'dark' ? 'inset -20px -20px 60px rgba(0,0,0,0.6), inset 20px 20px 60px rgba(255,255,255,0.4), 0 40px 100px rgba(0,0,0,0.8)'
-                                        : 'inset -20px -20px 60px rgba(0,0,0,0.2), inset 20px 20px 60px rgba(255,255,255,0.6), 0 40px 100px rgba(217,130,43,0.3)',
-            animation: 'abstract-morph 14s ease-in-out infinite, float 6s ease-in-out infinite',
-            zIndex: -1, pointerEvents: 'none'
-          }} />
+          <Reveal dir="scale" delay={400} style={{
+            position: 'absolute', top: '15%', right: '5%', zIndex: 5, pointerEvents: 'auto'
+          }}>
+            <div className="hero-avatar" style={{
+               width: 'clamp(180px, 25vw, 320px)', height: 'clamp(180px, 25vw, 320px)',
+               display: 'flex', alignItems: 'center', justifyContent: 'center',
+               /* Robot is now stationary but still blinks/greets on hover */
+               position: 'relative',
+               cursor: 'pointer',
+               pointerEvents: 'auto',
+               filter: theme === 'dark' 
+                 ? 'drop-shadow(0 0 30px rgba(250,187,119,0.3))' 
+                 : 'drop-shadow(0 0 30px rgba(217,130,43,0.15))'
+            }}>
+              {/* Digital Eyes: perfectly aligned with the robot's face */}
+              <div style={{
+                position: 'absolute', top: '21.2%', left: '46%', width: 8, height: 8,
+                background: '#61dafb', borderRadius: '50%',
+                boxShadow: '0 0 10px #61dafb, 0 0 20px #61dafb',
+                animation: 'robot-blink 4s linear infinite',
+                zIndex: 2
+              }} />
+              <div style={{
+                position: 'absolute', top: '20.8%', left: '54.5%', width: 8, height: 8,
+                background: '#61dafb', borderRadius: '50%',
+                boxShadow: '0 0 10px #61dafb, 0 0 20px #61dafb',
+                animation: 'robot-blink 4s linear infinite',
+                zIndex: 2
+              }} />
+
+              {/* Animated speech bubble that appears on hover */}
+              <div className="speech-bubble" style={{
+                position: 'absolute', top: '-15%', left: '-15%',
+                background: theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+                backdropFilter: 'blur(12px)',
+                padding: 'clamp(12px, 2vw, 20px) clamp(16px, 3vw, 28px)',
+                borderRadius: '24px 24px 24px 4px',
+                border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
+                color: 'var(--text)', fontSize: '0.85rem', fontWeight: 500,
+                opacity: 0, transform: 'scale(0.8) translateY(10px)',
+                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                pointerEvents: 'none',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                whiteSpace: 'nowrap',
+                zIndex: 10
+              }}>
+                👋 Hello! I'm Viraj's AI Assistant.
+              </div>
+              <style>{`
+                .hero-avatar:hover .speech-bubble {
+                  opacity: 1 !important;
+                  transform: scale(1) translateY(0) !important;
+                }
+                @keyframes robot-blink {
+                  0%, 94%, 100% { transform: scaleY(1); }
+                  97%           { transform: scaleY(0.1); }
+                }
+              `}</style>
+              
+              <img 
+                src="/robot_transparent.png" 
+                alt="Friendly Waving Robot" 
+                style={{ 
+                  width: '100%', height: '100%', objectFit: 'contain',
+                  mixBlendMode: theme === 'dark' ? 'screen' : 'normal',
+                  position: 'relative', zIndex: 1
+                }}
+              />
+            </div>
+          </Reveal>
 
           <div style={{ maxWidth: 680, zIndex: 1, marginTop: '6vh' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 24, color: 'var(--text-muted)' }}>
-              Biography
-            </div>
-            
-            <h1 style={{
-              fontSize: 'clamp(2.4rem, 8vw, 6rem)', fontWeight: 900, lineHeight: 0.9,
-              letterSpacing: '-0.04em', textTransform: 'uppercase', marginBottom: 'clamp(24px, 4vw, 40px)'
-            }}>
-              BUILDING <br />
-              <span style={{ color: 'transparent', WebkitTextStroke: '1px var(--text)' }}>DIGITAL</span> VOIDS.
-            </h1>
-
-            <p style={{
-              fontSize: 'clamp(0.95rem, 1.5vw, 1.15rem)', lineHeight: 1.6,
-              color: 'var(--accent)', fontWeight: 600, maxWidth: 500, marginBottom: 16
-            }}>
-              {DATA.tagline}
-            </p>
-            <p style={{
-              fontSize: 'clamp(0.85rem, 1.2vw, 1.05rem)', lineHeight: 1.7,
-              color: 'var(--text-muted)', fontWeight: 300, maxWidth: 550, marginBottom: 'clamp(28px, 4vw, 40px)'
-            }}>
-              {DATA.about}
-            </p>
-            <a href="/cv/Viraj_Suman_CV.pdf" download style={{
-              display: 'inline-flex', alignItems: 'center', gap: 12,
-              padding: 'clamp(12px, 2.5vw, 16px) clamp(24px, 5vw, 32px)',
-              background: 'var(--accent)', color: 'var(--bg)',
-              fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', fontWeight: 700,
-              letterSpacing: '0.1em', textTransform: 'uppercase', borderRadius: 30,
-              transition: 'transform 0.3s, box-shadow 0.3s'
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(217,130,43,0.3)' }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
-            >
-              Download CV <span style={{ fontSize: '1.1rem' }}>↓</span>
-            </a>
+            <Reveal dir="up" delay={0}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 24, color: 'var(--text-muted)' }}>
+                Biography
+              </div>
+            </Reveal>
+            <Reveal dir="up" delay={100}>
+              <h1 style={{
+                fontSize: 'clamp(2.4rem, 8vw, 6rem)', fontWeight: 900, lineHeight: 0.9,
+                letterSpacing: '-0.04em', textTransform: 'uppercase', marginBottom: 'clamp(24px, 4vw, 40px)'
+              }}>
+                BUILDING <br />
+                <span style={{ color: 'transparent', WebkitTextStroke: '1px var(--text)' }}>DIGITAL</span> VOIDS.
+              </h1>
+            </Reveal>
+            <Reveal dir="up" delay={220}>
+              <p style={{
+                fontSize: 'clamp(0.95rem, 1.5vw, 1.15rem)', lineHeight: 1.6,
+                color: 'var(--accent)', fontWeight: 600, maxWidth: 500, marginBottom: 16
+              }}>
+                {DATA.tagline}
+              </p>
+            </Reveal>
+            <Reveal dir="up" delay={320}>
+              <p style={{
+                fontSize: 'clamp(0.85rem, 1.2vw, 1.05rem)', lineHeight: 1.7,
+                color: 'var(--text-muted)', fontWeight: 300, maxWidth: 550, marginBottom: 'clamp(28px, 4vw, 40px)'
+              }}>
+                {DATA.about}
+              </p>
+            </Reveal>
+            <Reveal dir="up" delay={420}>
+              <a href="/cv/Viraj_Suman_CV.pdf" download style={{
+                display: 'inline-flex', alignItems: 'center', gap: 12,
+                padding: 'clamp(12px, 2.5vw, 16px) clamp(24px, 5vw, 32px)',
+                background: 'var(--accent)', color: 'var(--bg)',
+                fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', fontWeight: 700,
+                letterSpacing: '0.1em', textTransform: 'uppercase', borderRadius: 30,
+                transition: 'transform 0.3s, box-shadow 0.3s'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(217,130,43,0.3)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
+              >
+                Download CV <span style={{ fontSize: '1.1rem' }}>↓</span>
+              </a>
+            </Reveal>
           </div>
         </section>
 
 
         {/* THE TOOLKIT */}
         <section id="toolkit" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
-          <SectionHeading title="The Toolkit" />
+          <Reveal dir="left">
+            <SectionHeading title="The Toolkit" />
+          </Reveal>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 'clamp(16px, 3vw, 24px)' }}>
-            {DATA.skills.map((skill, i) => (
-              <div key={i} {...tilt3D} style={{
-                background: 'var(--surface)', padding: 'clamp(24px, 4vw, 40px)', borderRadius: 16,
-                border: '1px solid var(--border)', transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out'
-              }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: '1.4rem', marginBottom: 24 }}>⬡</div>
-                <h3 style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', fontWeight: 700, marginBottom: 12 }}>{skill.cat}</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(0.82rem, 1.5vw, 0.9rem)', lineHeight: 1.6, marginBottom: 32 }}>
-                  {skill.desc}
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {skill.items.map(item => (
-                    <span key={item} style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 6,
-                      background: 'var(--surface-hover)', border: '1px solid var(--border-strong)',
-                      padding: '6px 14px', borderRadius: 20, fontSize: '0.75rem', fontFamily: 'var(--font-mono)'
+            {DATA.skills.map((skill, i) => {
+              const bgIcon = SKILL_ICONS[skill.items[0]]
+              const bgIconColor = SKILL_COLORS[skill.items[0]] || 'var(--accent)'
+              
+              return (
+                <Reveal key={i} dir="up" delay={i * 120}>
+                  <div {...tilt3D} style={{
+                    background: 'var(--surface)', padding: 'clamp(24px, 4vw, 40px)', borderRadius: 16,
+                    border: '1px solid var(--border)', transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out',
+                    height: '100%', position: 'relative', overflow: 'hidden'
+                  }}>
+                    {/* Background faint logo */}
+                    <div style={{
+                      position: 'absolute', right: '-10%', bottom: '-10%',
+                      fontSize: '8rem', color: bgIconColor, opacity: 0.05,
+                      transform: 'rotate(-15deg)', pointerEvents: 'none', zIndex: 0
                     }}>
-                      {SKILL_ICONS[item] && <span style={{ color: 'var(--accent)' }}>{SKILL_ICONS[item]}</span>}
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
+                      {bgIcon}
+                    </div>
+
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                      <div style={{ color: bgIconColor, fontSize: '1.4rem', marginBottom: 24, filter: `drop-shadow(0 0 8px ${bgIconColor}66)` }}>
+                        {bgIcon}
+                      </div>
+                      <h3 style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', fontWeight: 700, marginBottom: 12 }}>{skill.cat}</h3>
+                      <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(0.82rem, 1.5vw, 0.9rem)', lineHeight: 1.6, marginBottom: 32 }}>
+                        {skill.desc}
+                      </p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                        {skill.items.map(item => {
+                          const iconColor = SKILL_COLORS[item] || 'var(--accent)'
+                          return (
+                            <span key={item} style={{
+                              display: 'inline-flex', alignItems: 'center', gap: 7,
+                              background: 'var(--surface-hover)',
+                              border: `1px solid ${iconColor}44`,
+                              padding: '7px 14px', borderRadius: 20, fontSize: '0.78rem', fontFamily: 'var(--font-mono)',
+                              transition: 'box-shadow 0.25s, border-color 0.25s',
+                              boxShadow: `0 0 0 0 ${iconColor}00`,
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 0 12px ${iconColor}55`; e.currentTarget.style.borderColor = `${iconColor}99` }}
+                            onMouseLeave={e => { e.currentTarget.style.boxShadow = ''; e.currentTarget.style.borderColor = `${iconColor}44` }}
+                            >
+                              {SKILL_ICONS[item] && (
+                                <span style={{
+                                  color: iconColor,
+                                  fontSize: '1.1rem',
+                                  display: 'flex', alignItems: 'center',
+                                  filter: `drop-shadow(0 0 4px ${iconColor}88)`,
+                                }}>
+                                  {SKILL_ICONS[item]}
+                                </span>
+                              )}
+                              {item}
+                            </span>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              )
+            })}
           </div>
         </section>
 
 
         {/* PROJECTS */}
         <section id="projects" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
-          <SectionHeading title="Projects" />
+          <Reveal dir="left">
+            <SectionHeading title="Projects" />
+          </Reveal>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {DATA.projects.map((p, i) => (
-              <a href={p.link || p.github} target="_blank" rel="noreferrer" key={i} className="project-row" style={{
+              <Reveal key={i} dir="up" delay={i * 80}>
+              <a href={p.link || p.github} target="_blank" rel="noreferrer" className="project-row" style={{
                 display: 'grid',
                 gridTemplateColumns: 'auto 1fr',
                 alignItems: 'start',
@@ -456,11 +711,23 @@ function App() {
                     </div>
                   </div>
                   <div style={{
-                    fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.1em',
-                    textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 12,
-                    flexWrap: 'wrap', display: 'flex', gap: 4
+                    display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 16
                   }}>
-                    {p.stack.join(' · ')}
+                    {p.stack.map(tech => {
+                      const techColor = SKILL_COLORS[tech] || 'var(--accent)'
+                      return (
+                        <div key={tech} style={{
+                          display: 'flex', alignItems: 'center', gap: 6,
+                          background: 'var(--surface-hover)', border: `1px solid ${techColor}33`,
+                          padding: '4px 10px', borderRadius: 4, 
+                          fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
+                          color: techColor, whiteSpace: 'nowrap'
+                        }}>
+                          {SKILL_ICONS[tech] && <span style={{ fontSize: '0.9rem' }}>{SKILL_ICONS[tech]}</span>}
+                          {tech}
+                        </div>
+                      )
+                    })}
                   </div>
                   <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', lineHeight: 1.6, marginBottom: 12 }}>
                     {p.desc}
@@ -470,16 +737,20 @@ function App() {
                   </ul>
                 </div>
               </a>
+              </Reveal>
             ))}
           </div>
         </section>
 
         {/* EXPERIENCE */}
         <section id="experience" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
-          <SectionHeading title="Experience & Training" />
+          <Reveal dir="left">
+            <SectionHeading title="Experience & Training" />
+          </Reveal>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 40 }}>
             {DATA.experience.map((exp, i) => (
-              <div key={i} style={{ marginBottom: 16 }}>
+              <Reveal key={i} dir="up" delay={i * 100}>
+              <div style={{ marginBottom: 16 }}>
                 <div style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>{exp.role}</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--accent)', marginBottom: 16 }}>
                   {exp.org} — {exp.date}
@@ -488,44 +759,56 @@ function App() {
                   {exp.points.map((pt, j) => <li key={j} style={{ marginBottom: 10 }}>{pt}</li>)}
                 </ul>
               </div>
+              </Reveal>
             ))}
           </div>
         </section>
 
         {/* EDUCATION & ACHIEVEMENTS */}
         <section id="education" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
-          <SectionHeading title="Education & Achievements" />
+          <Reveal dir="left">
+            <SectionHeading title="Education & Achievements" />
+          </Reveal>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(32px, 5vw, 40px)' }}>
-            <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 24, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Education</h3>
-              {DATA.education.map((ed, i) => (
-                <div key={i} style={{ marginBottom: 32, paddingLeft: 20, borderLeft: '2px solid var(--border)' }}>
-                  <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', fontWeight: 600, marginBottom: 6 }}>{ed.degree}</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{ed.inst} <br/> {ed.score}</div>
-                </div>
-              ))}
-            </div>
-
-            <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 24, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Achievements</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {DATA.achievements.map((a, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 16, color: 'var(--text)' }}>
-                    <span style={{ fontSize: '1.4rem' }}>{a.icon}</span>
-                    <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', lineHeight: 1.5, color: 'var(--text-muted)' }}>{a.text}</span>
+            <Reveal dir="left" delay={0}>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 24, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Education</h3>
+                {DATA.education.map((ed, i) => (
+                  <div key={i} style={{ marginBottom: 32, paddingLeft: 20, borderLeft: '2px solid var(--border)' }}>
+                    <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', fontWeight: 600, marginBottom: 6 }}>{ed.degree}</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{ed.inst} <br/> {ed.score}</div>
                   </div>
                 ))}
               </div>
-            </div>
+            </Reveal>
+
+            <Reveal dir="right" delay={120}>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 24, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Achievements</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {DATA.achievements.map((a, i) => (
+                    <Reveal key={i} dir="up" delay={i * 100}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, color: 'var(--text)' }}>
+                        <span style={{ fontSize: '1.4rem' }}>{a.icon}</span>
+                        <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', lineHeight: 1.5, color: 'var(--text-muted)' }}>{a.text}</span>
+                      </div>
+                    </Reveal>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
           </div>
         </section>
 
         {/* CERTIFICATIONS */}
         <section id="certifications" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
-          <SectionHeading title="Certifications" />
+          <Reveal dir="left">
+            <SectionHeading title="Certifications" />
+          </Reveal>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(12px, 2vw, 20px)' }}>
             {DATA.certs.map((cert, i) => (
-              <a href={cert.link} target="_blank" rel="noreferrer" key={i} {...tilt3D} style={{
+              <Reveal key={i} dir="up" delay={i * 100}>
+              <a href={cert.link} target="_blank" rel="noreferrer" {...tilt3D} style={{
                 display: 'flex', alignItems: 'center', gap: 20,
                 padding: 'clamp(16px, 3vw, 24px)', background: 'var(--surface)', border: '1px solid var(--border)',
                 borderRadius: 16, transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out, border-color 0.3s'
@@ -554,6 +837,7 @@ function App() {
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>{cert.org}</div>
                 </div>
               </a>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -561,27 +845,34 @@ function App() {
 
         {/* CONTACT */}
         <section id="contact" style={{ padding: 'clamp(60px, 10vw, 100px) 0 clamp(80px, 12vw, 160px)' }}>
-          <h2 style={{
-            fontSize: 'clamp(2.2rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1,
-            letterSpacing: '-0.04em', textTransform: 'uppercase', marginBottom: 24
-          }}>
-            INITIATE <br/> CONTACT.
-          </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(0.85rem, 1.5vw, 1rem)', marginBottom: 'clamp(32px, 6vw, 60px)', maxWidth: 400, lineHeight: 1.6 }}>
-            Currently accepting premium collaborations for web architecture and dimensional UX projects. Reach out to start a dialogue.
-          </p>
+          <Reveal dir="up" delay={0}>
+            <h2 style={{
+              fontSize: 'clamp(2.2rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1,
+              letterSpacing: '-0.04em', textTransform: 'uppercase', marginBottom: 24
+            }}>
+              INITIATE <br/> CONTACT.
+            </h2>
+          </Reveal>
+          <Reveal dir="up" delay={120}>
+            <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(0.85rem, 1.5vw, 1rem)', marginBottom: 'clamp(32px, 6vw, 60px)', maxWidth: 400, lineHeight: 1.6 }}>
+              Currently accepting premium collaborations for web architecture and dimensional UX projects. Reach out to start a dialogue.
+            </p>
+          </Reveal>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 'clamp(32px, 6vw, 60px)' }}>
-            <a href={`mailto:${DATA.email}`} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <FaEnvelope style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.9rem)', wordBreak: 'break-all' }}>{DATA.email}</span>
-            </a>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <FaMapMarkerAlt style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' }}>Phagwara, Punjab, India</span>
+          <Reveal dir="left" delay={200}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 'clamp(32px, 6vw, 60px)' }}>
+              <a href={`mailto:${DATA.email}`} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <FaEnvelope style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.9rem)', wordBreak: 'break-all' }}>{DATA.email}</span>
+              </a>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <FaMapMarkerAlt style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' }}>Phagwara, Punjab, India</span>
+              </div>
             </div>
-          </div>
+          </Reveal>
 
+          <Reveal dir="up" delay={300}>
           <div {...tilt3D} style={{
             background: 'var(--surface)', padding: 'clamp(24px, 5vw, 40px)', borderRadius: 16,
             border: '1px solid var(--border)', width: '100%', maxWidth: 500,
@@ -637,6 +928,7 @@ function App() {
               </button>
             </form>
           </div>
+          </Reveal>
         </section>
 
       </main>
