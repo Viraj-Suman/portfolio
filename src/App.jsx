@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FaJava, FaPython, FaNodeJs, FaCodeBranch, FaGithub, FaLinkedin, FaEnvelope, FaSun, FaMoon, FaMapMarkerAlt, FaExternalLinkAlt, FaBars, FaTimes } from 'react-icons/fa'
+import { FaJava, FaPython, FaNodeJs, FaCodeBranch, FaGithub, FaLinkedin, FaEnvelope, FaSun, FaMoon, FaMapMarkerAlt, FaExternalLinkAlt, FaBars, FaTimes, FaStar } from 'react-icons/fa'
 import { VscVscode } from 'react-icons/vsc'
 import {
   SiC, SiCplusplus, SiJavascript, SiReact, SiBootstrap,
   SiHtml5, SiCss, SiPhp, SiGit, SiGithub,
-  SiMysql, SiMongodb
+  SiMysql, SiMongodb, SiHackerrank
 } from 'react-icons/si'
 
 const SKILL_ICONS = {
@@ -302,6 +302,9 @@ function FloatingShapes({ theme }) {
           20%, 40%, 60% { transform: rotate(8deg); }
           70%        { transform: rotate(0deg); }
         }
+        @keyframes star-pop {
+          to { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
       `}</style>
 
       {/* ── LAYER 1: Large ambient glowing orbs (back depth) ── */}
@@ -421,6 +424,69 @@ function Reveal({ children, dir = 'up', delay = 0, style = {}, className = '', a
     >
       {children}
     </Tag>
+  )
+}
+// ─── End Scroll Reveal ────────────────────────────────────────────
+
+// ─── Achievement Tile ─────────────────────────────────────────────
+function AchievementTile({ achievement: a, delay, theme }) {
+  const [ref, visible] = useReveal()
+  const isHR = a.text.toLowerCase().includes('hackerrank')
+  const isLPU = a.text.includes('LPU')
+
+  return (
+    <div ref={ref} style={{ 
+      opacity: visible ? 1 : 0, transition: 'all 0.8s ease',
+      display: 'flex', flexDirection: 'column', gap: 12, color: 'var(--text)',
+      padding: '24px', borderRadius: 16, transition: 'all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+      background: 'var(--surface)', border: '1px solid var(--border)',
+      boxShadow: '0 4px 10px rgba(0,0,0,0.05)', position: 'relative', overflow: 'hidden'
+    }}
+    onMouseEnter={e => {
+      e.currentTarget.style.transform = 'translateY(-6px) scale(1.02)';
+      e.currentTarget.style.borderColor = 'var(--accent)';
+    }}
+    onMouseLeave={e => {
+      e.currentTarget.style.transform = 'translateY(0) scale(1)';
+      e.currentTarget.style.borderColor = 'var(--border)';
+    }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        {isHR ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', justifyContent: 'space-between' }}>
+            <SiHackerrank style={{ fontSize: '1.8rem', color: '#2EC866', filter: 'drop-shadow(0 0 8px rgba(46, 200, 102, 0.4))' }} />
+            {visible && (
+              <div key="stars" style={{ display: 'flex', gap: 4 }}>
+                {[0, 1, 2, 3, 4].map(starIndex => (
+                  <FaStar key={starIndex} style={{ 
+                    color: '#FFD700', 
+                    filter: 'drop-shadow(0 0 6px #FFD700)',
+                    opacity: 0,
+                    transform: 'scale(0.3) rotate(-45deg)',
+                    animation: `star-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards`,
+                    animationDelay: `${starIndex * 0.1 + 0.3}s`,
+                    fontSize: '1rem'
+                  }} />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : isLPU ? (
+          <img src="/Lovely_Professional_University_logo.png" alt="LPU Logo" style={{ width: 'auto', height: 40, objectFit: 'contain' }} />
+        ) : (
+          <span style={{ fontSize: '1.8rem', color: 'var(--accent)' }}>
+             {a.text.toLowerCase().includes('hackathon') ? <FaCodeBranch /> : a.icon}
+          </span>
+        )}
+      </div>
+      <p style={{ 
+        fontSize: 'clamp(0.8rem, 1.5vw, 0.95rem)', 
+        lineHeight: 1.4, margin: 0, fontWeight: 500,
+        color: 'var(--text-muted)'
+      }}>
+        {a.text}
+      </p>
+    </div>
   )
 }
 // ─── End Scroll Reveal ────────────────────────────────────────────
@@ -685,8 +751,16 @@ function App() {
                 transition: 'background 0.3s',
                 color: 'var(--text)'
               }}
-              onMouseEnter={e => e.currentTarget.querySelector('.proj-title').style.color = 'var(--accent)'}
-              onMouseLeave={e => e.currentTarget.querySelector('.proj-title').style.color = 'var(--text)'}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = theme === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)';
+                e.currentTarget.style.transform = 'translateX(8px)';
+                e.currentTarget.querySelector('.proj-title').style.color = 'var(--accent)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.transform = 'translateX(0)';
+                e.currentTarget.querySelector('.proj-title').style.color = 'var(--text)';
+              }}
               >
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-subtle)', paddingTop: 6 }}>
                   {p.id}
@@ -784,15 +858,10 @@ function App() {
 
             <Reveal dir="right" delay={120}>
               <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 24, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Achievements</h3>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 24, textTransform: 'uppercase', color: 'var(--text-muted)' }}>RECOGNITIONS</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   {DATA.achievements.map((a, i) => (
-                    <Reveal key={i} dir="up" delay={i * 100}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, color: 'var(--text)' }}>
-                        <span style={{ fontSize: '1.4rem' }}>{a.icon}</span>
-                        <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', lineHeight: 1.5, color: 'var(--text-muted)' }}>{a.text}</span>
-                      </div>
-                    </Reveal>
+                    <AchievementTile key={i} achievement={a} delay={i * 100} theme={theme} />
                   ))}
                 </div>
               </div>
