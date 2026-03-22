@@ -938,6 +938,22 @@ function App() {
                 <FaMapMarkerAlt style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' }}>Phagwara, Punjab, India</span>
               </div>
+              <div style={{ display: 'flex', gap: 24, marginTop: 8 }}>
+                <a href={DATA.github} target="_blank" rel="noreferrer" style={{ color: 'var(--text-muted)', fontSize: '1.5rem', transition: 'all 0.3s ease' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  title="GitHub Profile"
+                >
+                  <FaGithub />
+                </a>
+                <a href={DATA.linkedin} target="_blank" rel="noreferrer" style={{ color: 'var(--text-muted)', fontSize: '1.5rem', transition: 'all 0.3s ease' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#0077b5'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  title="LinkedIn Profile"
+                >
+                  <FaLinkedin />
+                </a>
+              </div>
             </div>
           </Reveal>
 
