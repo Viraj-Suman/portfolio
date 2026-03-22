@@ -82,9 +82,9 @@ const DATA = {
     { name: '72-Hour DSA Bootcamp', org: 'IamNeo', date: 'Dec 2024', link: 'https://drive.google.com/file/d/1_7MF0_gR1hmPJNZwvUDEytKbGAAXiBn_/view', image: '/certificates/bootcamp.png' }
   ],
   education: [
-    { degree: 'B.Tech in Computer Science and Engineering', inst: 'Lovely Professional University', score: '2023 – Present | CGPA: 6.8', period: 'Ongoing' },
-    { degree: 'Intermediate', inst: 'Pre-University', score: '63%', period: 'Completed' },
-    { degree: 'Matriculation', inst: 'High School', score: '86%', period: 'Completed' }
+    { degree: 'B.Tech in Computer Science and Engineering', inst: 'Lovely Professional University', score: '2023 – 2027 (Expected) | CGPA: 6.8', status: 'Pursuing' },
+    { degree: 'Intermediate', inst: 'Resonance International School Muzaffarpur, Bihar', score: '63%', period: 'Completed' },
+    { degree: 'Matriculation', inst: 'Sushant Public School Muzaffarpur, Bihar', score: '86%', period: 'Completed' }
   ],
   roadmap: [
     { 
@@ -111,9 +111,16 @@ const DATA = {
     { 
       phase: '2026', 
       title: 'ARCHITECTURE & SCALABILITY', 
-      status: 'present',
+      status: 'active',
       items: ['Tour Operator Platform', 'Next.js & Modern Frameworks', 'System Design Patterns'],
       desc: 'Shifting focus towards architecting robust, scalable digital solutions with a focus on user experience and system integrity.'
+    },
+    { 
+      phase: '2027', 
+      title: 'FINAL PHASE / GRADUATION', 
+      status: 'upcoming',
+      items: ['Capstone Project Completion', 'Industry Specialization', 'Technical Leadership'],
+      desc: 'The final push toward academic completion and transition into full-scale professional engineering.'
     }
   ]
 }
@@ -948,12 +955,37 @@ function App() {
             <Reveal dir="left" delay={0}>
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 24, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Education</h3>
-                {DATA.education.map((ed, i) => (
-                  <div key={i} style={{ marginBottom: 32, paddingLeft: 20, borderLeft: '2px solid var(--border)' }}>
-                    <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', fontWeight: 600, marginBottom: 6 }}>{ed.degree}</div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{ed.inst} <br/> {ed.score}</div>
-                  </div>
-                ))}
+                {DATA.education.map((ed, i) => {
+                  const isPursuing = ed.status === 'Pursuing';
+                  return (
+                    <div key={i} style={{ 
+                      marginBottom: 32, paddingLeft: 20, 
+                      borderLeft: `2px solid ${isPursuing ? 'var(--accent)' : 'var(--border)'}`,
+                      position: 'relative'
+                    }}>
+                      {isPursuing && (
+                        <div style={{
+                          position: 'absolute', left: -2, top: 0, bottom: 0, width: 2,
+                          background: 'var(--accent)', boxShadow: '0 0 15px var(--accent), 0 0 30px var(--accent)',
+                          animation: 'pulse-glow 2s ease-in-out infinite'
+                        }} />
+                      )}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                        <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', fontWeight: 600 }}>{ed.degree}</div>
+                        {isPursuing && (
+                          <span style={{ 
+                            fontSize: '0.6rem', fontFamily: 'var(--font-mono)', padding: '2px 8px', 
+                            borderRadius: 4, background: 'var(--accent)', color: 'var(--bg)',
+                            textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 800
+                          }}>
+                            {ed.status}
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{ed.inst} <br/> {ed.score}</div>
+                    </div>
+                  );
+                })}
               </div>
             </Reveal>
 
