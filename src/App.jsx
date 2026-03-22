@@ -85,6 +85,36 @@ const DATA = {
     { degree: 'B.Tech in Computer Science and Engineering', inst: 'Lovely Professional University', score: '2023 – Present | CGPA: 6.8', period: 'Ongoing' },
     { degree: 'Intermediate', inst: 'Pre-University', score: '63%', period: 'Completed' },
     { degree: 'Matriculation', inst: 'High School', score: '86%', period: 'Completed' }
+  ],
+  roadmap: [
+    { 
+      phase: '2023', 
+      title: 'PROGRAMMING FUNDAMENTALS', 
+      status: 'completed',
+      items: ['Mastering C/C++ Essentials', 'Logical Thinking & Problem Solving', 'Foundational Mathematics'],
+      desc: 'Initiated the engineering journey by mastering low-level programming and building a strong mathematical foundation.'
+    },
+    { 
+      phase: '2024', 
+      title: 'DSA & ADVANCED LOGIC', 
+      status: 'completed',
+      items: ['Data Structures & Algorithms (Bootcamp)', 'OOP with Java (5-Star HackerRank)', 'Python Scripting'],
+      desc: 'Focused on algorithmic efficiency and high-level programming paradigms to solve complex computational problems.'
+    },
+    { 
+      phase: '2025', 
+      title: 'FULL STACK & SPECIALIZATION', 
+      status: 'active',
+      items: ['Web Architecture (PHP, React, Node.js)', 'IoT Exploration', 'Advanced Plagiarism Detection Tool'],
+      desc: 'Bridging the gap between theory and application by building full-stack systems and exploring emerging technologies like IoT.'
+    },
+    { 
+      phase: '2026', 
+      title: 'ARCHITECTURE & SCALABILITY', 
+      status: 'present',
+      items: ['Tour Operator Platform', 'Next.js & Modern Frameworks', 'System Design Patterns'],
+      desc: 'Shifting focus towards architecting robust, scalable digital solutions with a focus on user experience and system integrity.'
+    }
   ]
 }
 
@@ -156,7 +186,7 @@ const tilt3D = {
 }
 
 function Nav({ theme, toggleTheme }) {
-  const links = ['Toolkit', 'Projects', 'Experience', 'Education', 'Certifications', 'Contact']
+  const links = ['Toolkit', 'Projects', 'Experience', 'Journey', 'Education', 'Certifications', 'Contact']
   const [menuOpen, setMenuOpen] = useState(false)
 
   // Close menu on route change / scroll
@@ -180,7 +210,7 @@ function Nav({ theme, toggleTheme }) {
       {/* Desktop links */}
       <div className="nav-desktop" style={{ display: 'flex', gap: 'clamp(12px, 2.5vw, 32px)', alignItems: 'center' }}>
         {links.map(link => (
-          <a key={link} href={`#${link.toLowerCase()}`} style={{
+          <a key={link} href={`#${link === 'Journey' ? 'roadmap' : link.toLowerCase()}`} style={{
             fontFamily: 'var(--font-mono)', fontSize: '0.75rem', textTransform: 'uppercase',
             letterSpacing: '0.1em', transition: 'color 0.3s'
           }}
@@ -223,7 +253,7 @@ function Nav({ theme, toggleTheme }) {
           backdropFilter: 'blur(20px)'
         }}>
           {links.map(link => (
-            <a key={link} href={`#${link.toLowerCase()}`}
+            <a key={link} href={`#${link === 'Journey' ? 'roadmap' : link.toLowerCase()}`}
               onClick={() => setMenuOpen(false)}
               style={{
                 fontFamily: 'var(--font-mono)', fontSize: '0.85rem', textTransform: 'uppercase',
@@ -813,6 +843,77 @@ function App() {
               </a>
               </Reveal>
             ))}
+          </div>
+        </section>
+
+        {/* LEARNING JOURNEY */}
+        <section id="roadmap" style={{ padding: 'clamp(60px, 10vw, 100px) 0' }}>
+          <Reveal dir="left">
+            <SectionHeading title="Learning Journey" />
+          </Reveal>
+          
+          <div style={{ position: 'relative', paddingLeft: 'clamp(24px, 5vw, 40px)' }}>
+            {/* Timeline Line */}
+            <div style={{ 
+              position: 'absolute', left: 0, top: 0, bottom: 0, 
+              width: 1, background: 'linear-gradient(to bottom, var(--accent), var(--border))',
+              opacity: 0.5
+            }} />
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(32px, 6vw, 60px)' }}>
+              {DATA.roadmap.map((step, i) => (
+                <Reveal key={i} dir="up" delay={i * 100}>
+                  <div style={{ position: 'relative' }}>
+                    {/* Timeline Dot */}
+                    <div style={{ 
+                      position: 'absolute', left: 'clamp(-28px, -5.5vw, -44px)', top: 4,
+                      width: 12, height: 12, borderRadius: '50%',
+                      background: step.status === 'completed' ? 'var(--accent)' : step.status === 'active' ? 'var(--text)' : 'var(--bg)',
+                      border: `2px solid ${step.status === 'upcoming' ? 'var(--border-strong)' : 'var(--accent)'}`,
+                      boxShadow: step.status === 'active' ? '0 0 15px var(--accent)' : 'none',
+                      zIndex: 2
+                    }} />
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent)', fontWeight: 700 }}>
+                          YEAR {step.phase}
+                        </span>
+                        <span style={{ 
+                          fontSize: '0.6rem', fontFamily: 'var(--font-mono)', padding: '2px 8px', 
+                          borderRadius: 4, background: step.status === 'active' ? 'var(--accent)' : 'var(--surface)',
+                          color: step.status === 'active' ? 'var(--bg)' : 'var(--text-muted)',
+                          textTransform: 'uppercase', letterSpacing: '0.05em'
+                        }}>
+                          {step.status}
+                        </span>
+                      </div>
+
+                      <h3 style={{ fontSize: 'clamp(1rem, 2.5vw, 1.4rem)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em' }}>
+                        {step.title}
+                      </h3>
+
+                      <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', maxWidth: 600, lineHeight: 1.6, margin: 0 }}>
+                        {step.desc}
+                      </p>
+
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 8 }}>
+                        {step.items.map((item, j) => (
+                          <div key={j} style={{ 
+                            fontFamily: 'var(--font-mono)', fontSize: '0.75rem', 
+                            color: step.status === 'upcoming' ? 'var(--text-subtle)' : 'var(--text)',
+                            display: 'flex', alignItems: 'center', gap: 8 
+                          }}>
+                            <span style={{ color: 'var(--accent)', fontSize: '0.5rem' }}>◆</span>
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
 
