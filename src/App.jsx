@@ -122,7 +122,8 @@ const DATA = {
       items: ['Capstone Project Completion', 'Industry Specialization', 'Technical Leadership'],
       desc: 'The final push toward academic completion and transition into full-scale professional engineering.'
     }
-  ]
+  ],
+  profilePic: '/profile%20pic/viraj%20pic.jpg'
 }
 
 function CustomCursor() {
@@ -577,53 +578,84 @@ function App() {
           <Reveal dir="scale" delay={400} style={{
             position: 'absolute', top: '15%', right: '5%', zIndex: 5, pointerEvents: 'auto'
           }}>
-            <div className="hero-avatar" style={{
-               width: 'clamp(180px, 25vw, 320px)', height: 'clamp(180px, 25vw, 320px)',
-               display: 'flex', alignItems: 'center', justifyContent: 'center',
-               /* Robot is now stationary but still blinks/greets on hover */
+            <div className="hero-avatar-container" style={{
                position: 'relative',
-               cursor: 'pointer',
+               width: 'clamp(192px, 28vw, 336px)',
+               height: 'clamp(192px, 28vw, 336px)',
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
                pointerEvents: 'auto',
-               filter: theme === 'dark' 
-                 ? 'drop-shadow(0 0 30px rgba(250,187,119,0.3))' 
-                 : 'drop-shadow(0 0 30px rgba(217,130,43,0.15))'
             }}>
-              {/* Digital Eyes: perfectly aligned with the robot's face */}
-              <div style={{
-                position: 'absolute', top: '21.2%', left: '46%', width: 8, height: 8,
-                background: '#61dafb', borderRadius: '50%',
-                boxShadow: '0 0 10px #61dafb, 0 0 20px #61dafb',
-                animation: 'robot-blink 4s linear infinite',
-                zIndex: 2
-              }} />
-              <div style={{
-                position: 'absolute', top: '20.8%', left: '54.5%', width: 8, height: 8,
-                background: '#61dafb', borderRadius: '50%',
-                boxShadow: '0 0 10px #61dafb, 0 0 20px #61dafb',
-                animation: 'robot-blink 4s linear infinite',
-                zIndex: 2
-              }} />
-
-              {/* Animated speech bubble that appears on hover */}
-              <div className="speech-bubble" style={{
-                position: 'absolute', top: '-15%', left: '-15%',
-                background: theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
-                backdropFilter: 'blur(12px)',
-                padding: 'clamp(12px, 2vw, 20px) clamp(16px, 3vw, 28px)',
-                borderRadius: '24px 24px 24px 4px',
-                border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
-                color: 'var(--text)', fontSize: '0.85rem', fontWeight: 500,
-                opacity: 0, transform: 'scale(0.8) translateY(10px)',
-                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                pointerEvents: 'none',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-                whiteSpace: 'nowrap',
-                zIndex: 10
+              {/* Main Profile Image: Large and Circular */}
+              <div {...tilt3D} style={{
+                width: '100%', height: '100%', borderRadius: '50%',
+                overflow: 'hidden', border: '5px solid var(--accent)',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 30px var(--accent-transparent)',
+                background: 'var(--surface)', zIndex: 2,
+                transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out'
               }}>
-                👋 Hello! I'm Viraj's AI Assistant.
+                <img 
+                  src={DATA.profilePic} 
+                  alt={DATA.name} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
+              </div>
+
+              {/* Smaller Robot Assistant: Positioned to the side */}
+              <div className="hero-robot" style={{
+                position: 'absolute', bottom: '-8%', right: '-25%',
+                width: '45%', height: '45%', zIndex: 10,
+                filter: theme === 'dark' 
+                  ? 'drop-shadow(0 0 20px rgba(250,187,119,0.3))' 
+                  : 'drop-shadow(0 0 20px rgba(217,130,43,0.15))',
+                cursor: 'pointer'
+              }}>
+                {/* Digital Eyes */}
+                <div style={{
+                  position: 'absolute', top: '21.2%', left: '46%', width: 4, height: 4,
+                  background: '#61dafb', borderRadius: '50%',
+                  boxShadow: '0 0 5px #61dafb, 0 0 10px #61dafb',
+                  animation: 'robot-blink 4s linear infinite',
+                  zIndex: 12
+                }} />
+                <div style={{
+                  position: 'absolute', top: '20.8%', left: '54.5%', width: 4, height: 4,
+                  background: '#61dafb', borderRadius: '50%',
+                  boxShadow: '0 0 5px #61dafb, 0 0 10px #61dafb',
+                  animation: 'robot-blink 4s linear infinite',
+                  zIndex: 12
+                }} />
+
+                {/* Speech Bubble */}
+                <div className="speech-bubble" style={{
+                  position: 'absolute', top: '-40%', left: '-50%',
+                  background: theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+                  backdropFilter: 'blur(12px)',
+                  padding: '10px 16px', borderRadius: '20px 20px 20px 4px',
+                  border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
+                  color: 'var(--text)', fontSize: '0.75rem', fontWeight: 500,
+                  opacity: 0, transform: 'scale(0.8) translateY(10px)',
+                  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                  pointerEvents: 'none',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                  whiteSpace: 'nowrap',
+                  zIndex: 15
+                }}>
+                  👋 I'm the Assistant!
+                </div>
+                
+                <img 
+                  src="/robot_transparent.png" 
+                  alt="Friendly Waving Robot" 
+                  style={{ 
+                    width: '100%', height: '100%', objectFit: 'contain',
+                    mixBlendMode: theme === 'dark' ? 'screen' : 'normal'
+                  }}
+                />
               </div>
               <style>{`
-                .hero-avatar:hover .speech-bubble {
+                .hero-robot:hover .speech-bubble {
                   opacity: 1 !important;
                   transform: scale(1) translateY(0) !important;
                 }
@@ -632,16 +664,6 @@ function App() {
                   97%           { transform: scaleY(0.1); }
                 }
               `}</style>
-              
-              <img 
-                src="/robot_transparent.png" 
-                alt="Friendly Waving Robot" 
-                style={{ 
-                  width: '100%', height: '100%', objectFit: 'contain',
-                  mixBlendMode: theme === 'dark' ? 'screen' : 'normal',
-                  position: 'relative', zIndex: 1
-                }}
-              />
             </div>
           </Reveal>
 
